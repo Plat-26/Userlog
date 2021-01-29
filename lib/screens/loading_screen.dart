@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:user_log/service/networking.dart';
-
-import '../models/service_users.dart';
+import 'package:user_log/controllers/service-users_controller.dart';
 import 'display_users_screen.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -14,24 +12,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    getUserData();
+    getUsers();
   }
 
-  void cacheData() {
-    final String listOfUsers = "CachedListOfUsers.json";
-  }
-
-  void getUserData() async {
-    NetworkHelper networkHelper = NetworkHelper(url: '/user');
-
-    var responseBody = await networkHelper.getUsers();
-    Iterable listOfUsers = responseBody['data'];
-
-    List<ServiceUsers> serviceUsers =
-        listOfUsers.map((model) => ServiceUsers.fromJson(model)).toList();
-
+  void getUsers()  async {
+    await ServiceUsersController().getListOfUsers();
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-      return DisplayUsersScreen(allUsers: serviceUsers);
+      return DisplayUsersScreen(allUsers: ServiceUsersController.listOfServiceUsers);
     }));
   }
 
